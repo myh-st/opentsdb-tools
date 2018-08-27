@@ -1,0 +1,30 @@
+#!/bin/bash
+#Export OpenTSDB ,Please install OpenTSDB by MYH script
+DATE=`date +%Y-%m-%d`
+TIME=`date +%Y-%m-%d_%Hh%Mm`
+while getopts o: option
+do
+case "${option}"
+in
+o) DIR=${OPTARG};;
+esac
+done
+if  [[ $1 = "-o" ]]; then
+    if [[ ! -e $DIR ]]; then
+    mkdir $DIR && mkdir /$DIR/opentsdb-backup
+    fi
+hbase org.apache.hadoop.hbase.mapreduce.Export -Dmapreduce.output.fileoutputformat.compress=true -Dmapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec 'tsdb' "$DIR/tsdb"
+hbase org.apache.hadoop.hbase.mapreduce.Export -Dmapreduce.output.fileoutputformat.compress=true -Dmapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec 'tsdb-uid' "$DIR/tsdb-uid"
+hbase org.apache.hadoop.hbase.mapreduce.Export -Dmapreduce.output.fileoutputformat.compress=true -Dmapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec 'tsdb-tree' "$DIR/tsdb-tree"
+hbase org.apache.hadoop.hbase.mapreduce.Export -Dmapreduce.output.fileoutputformat.compress=true -Dmapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec 'tsdb-meta' "$DIR/tsdb-meta"
+cd /$DIR/opentsdb-backup && tar -zcvf tsdb-backup-$DATE.tar.gz tsdb*
+shopt -s extglob
+rm -rfv /$DIR/opentsdb-backup/ !(*.tar.gz|*.sh)
+echo ""
+echo "Output file /$DIR/opentsdb-backup"
+echo ""
+else
+    echo ""
+    echo "Please specify dbpath to export use option -o /path/to/db"
+    echo ""
+fi

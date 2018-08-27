@@ -1,0 +1,23 @@
+#!/bin/bash
+#Import OpenTSDB ,Please install OpenTSDB by MYH script
+while getopts db: option
+do
+case "${option}"
+in
+db) DIR=${OPTARG};;
+esac
+done
+if  [[ $1 = "-db" ]]; then
+    if [[ ! -e $DIR ]]; then
+    echo "No such file or directory, The file doesn't exist."
+    fi
+env COMPRESSION=none HBASE_HOME=/usr/lib/hbase /usr/share/opentsdb/tools/create_table.sh
+hbase org.apache.hadoop.hbase.mapreduce.Import 'tsdb' "$DIR/tsdb"
+hbase org.apache.hadoop.hbase.mapreduce.Import 'tsdb-uid' "$DIR/tsdb-uid"
+hbase org.apache.hadoop.hbase.mapreduce.Import 'tsdb-tree' "$DIR/tsdb-tree"
+hbase org.apache.hadoop.hbase.mapreduce.Import 'tsdb-meta' "$DIR/tsdb-meta"
+else
+    echo ""
+    echo "Please specify dbpath to import use option -d /path/to/db"
+    echo ""
+fi
