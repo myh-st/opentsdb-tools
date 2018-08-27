@@ -1,34 +1,14 @@
-## opentsdb-tools
+# opentsdb-tools
+    OpenTSDB - Import and Export script
 
-OpenTSDB - Import and Export script
+create a simple tables run my script create_table
 
-## Use Hbase
+    ./create_table
 
-hbase shell
+Export opentsdb database run tsdb-export script and specify option -o /path/to/db
 
-## List table
+    ./tsdb-export -o /path/to/db
 
-list
+Import opentsdb database run tsdb-import script and specify option -db to destination db path
 
-## disable and drop tables
-
-disable 'tsdb'
-disable 'tsdb-meta'
-disable 'tsdb-tree'
-disable 'tsdb-uid'
-drop 'tsdb'
-drop 'tsdb-meta'
-drop 'tsdb-tree'
-drop 'tsdb-uid'
-
-## create a simple tables run my script create_table
-
-./create_table
-
-## Export opentsdb run tsdb-export script default export path is /bigdata/opentsdb-backup/ file name tsdb-backup-<current-exportdate>.tar.gz
-
-./tsdb-export
-
-## Import opentsdb run tsdb-import script and specify option -d to destination path
-
-./tsdb-import -d /path/to/db 
+./tsdb-import -db /path/to/db
